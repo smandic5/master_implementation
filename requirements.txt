@@ -1,0 +1,9 @@
+numpy
+torch
+higher
+scipy
+scikit-learn
+gymnasium>=1.0.0
+gymnasium[mujoco]
+aim
+pre-commit
