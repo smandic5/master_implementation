@@ -1,0 +1,22 @@
+Bootstrap: docker
+From: python:3.12.12-slim
+
+%post
+    echo "Installing Python dependencies..."
+
+    # Install pip packages
+    python3 -m pip install --upgrade pip
+    pip install --no-cache-dir numpy
+    pip install --no-cache-dir torch
+    pip install --no-cache-dir higher
+    pip install --no-cache-dir scipy
+    pip install --no-cache-dir scikit-learn
+    pip install --no-cache-dir gymnasium
+    pip install --no-cache-dir gymnasium[mujoco]
+    pip install --no-cache-dir aim
+
+    echo "Python-Image configured."
+
+%runscript
+    echo "Container running. Starting Python-Shell."
+    exec python3
