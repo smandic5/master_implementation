@@ -1,9 +1,9 @@
 from .args import Args
-from .logger_base import AIMLogger, LoggerBase
+from .logger_base import MemoryLogger, LoggerBase
 
 
 def init_logger(args: Args, run_name: str) -> LoggerBase:
-    logger = AIMLogger()
+    logger = MemoryLogger()
     logger.define_experiment(
         env_name="MamlTorchCheetah",
         algorithm_name="TorchMamlPPO",

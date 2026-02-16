@@ -3,10 +3,11 @@ import higher
 import numpy as np
 import torch
 import torch.optim as optim
+import csv
 from .agent import Agent
 from .args import Args
 from .checkpoint import save_model
-from .logger_base import LoggerBase
+from .logger_base import LoggerBase, MemoryLogger
 from .ppo.lr_handling import lr_annealing
 from .ppo.storage import DataHolder, RunData
 from .ppo.train_ppo import train_ppo
@@ -39,8 +40,17 @@ def train_maml_ppo(
         envs = selector.sample()
         optimizer.zero_grad()
 
-        if iteration % args.eval_freq == 0:
+        if iteration % args.eval_freq == 0 and iteration != 0:
             checkpoint(agent, args, iteration, run_name=run_name)
+            
+            if type(logger) == MemoryLogger:
+                import json
+                
+                filename = "stats.json"
+                dt = logger.stats
+
+                with open(filename, "w") as f:
+                    json.dump(dt, f)
 
         #print(f"Meta iteration: {iteration}")
         with higher.innerloop_ctx(

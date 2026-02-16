@@ -1,13 +1,8 @@
 import abc
-import atexit
-import contextlib
 import time
 from typing import Any
 
-try:
-    import aim
-except ImportError:
-    aim = None
+import numpy as np
 
 
 class LoggerBase(abc.ABC):
@@ -132,42 +127,36 @@ class LoggerBase(abc.ABC):
         t : float, optional
             Wallclock time, measured with time.time().
         """
-        
-        
-class AIMLogger(LoggerBase):
-    """Use AIM to log experiment statistics.
+
+class MemoryLogger(LoggerBase):
+    """Logger class to record experiment statistics in memory.
+
+    This logger stores experiment statistics in memory.
 
     Parameters
     ----------
-    step_counter : str, one of ['episode', 'step', 'time'], optional
-        Define which value should be used as a step counter.
-
-    log_system_params : bool, optional
-        Log system parameters, e.g. memory and CPU consumption.
+    verbose : int, optional
+        Verbosity level.
     """
 
-    counter_idx: int
-    log_system_params: bool
+    env_name: str | None
+    algorithm_name: str | None
     start_time: float
-    hparams: dict | None
+    hparams: dict | None = None
     _n_episodes: int
     n_steps: int
+    stats_loc: dict[str, list[tuple[int | None, int | None, float | None]]]
+    stats: dict[str, list[Any]]
 
-    def __init__(
-        self, step_counter: str = "step", log_system_params: bool = False
-    ):
-        if aim is None:
-            raise ImportError(
-                "Aim is required to use this logger, but is not installed."
-            )
-        assert step_counter in ["episode", "step", "time"]
-        self.counter_idx = ["episode", "step", "time"].index(step_counter)
-        self.log_system_params = log_system_params
-        self.run = None
+    def __init__(self):
+        self.env_name = None
+        self.algorithm_name = None
         self.start_time = 0.0
         self.hparams = None
         self._n_episodes = 0
         self.n_steps = 0
+        self.stats_loc = {}
+        self.stats = {}
 
     @property
     def n_episodes(self) -> int:
@@ -209,12 +198,10 @@ class AIMLogger(LoggerBase):
         hparams : dict, optional
             Hyperparameters of the experiment.
         """
-        self.run = aim.Run(
-            experiment=f"{env_name}-{algorithm_name}",
-            log_system_params=self.log_system_params,
-        )
-        atexit.register(self.run.close)
-        self.run["hparams"] = hparams if hparams is not None else {}
+        self.env_name = env_name
+        self.algorithm_name = algorithm_name
+        self.start_time = time.time()
+        self.hparams = hparams
 
     def record_stat(
         self,
@@ -237,8 +224,7 @@ class AIMLogger(LoggerBase):
             Value that should be recorded.
 
         episode : int, optional
-            Episode which we record the statistic. Will be mapped to epochs
-            in the AIM run.
+            Episode which we record the statistic.
 
         step : int, optional
             Step at which we record the statistic.
@@ -252,15 +238,65 @@ class AIMLogger(LoggerBase):
         format_str : str, optional
             Format string for stdout logging.
         """
+        if key not in self.stats:
+            self.stats_loc[key] = []
+            self.stats[key] = []
         if episode is None:
             episode = self._n_episodes
         if step is None:
             step = self.n_steps
         if t is None:
             t = time.time() - self.start_time
-        s = [episode, step, t][self.counter_idx]
-        with contextlib.suppress(TypeError):
-            value = float(value)
-        self.run.track(value=value, name=key, step=s, epoch=episode)
+        self.stats_loc[key].append((episode, step, t))
+        self.stats[key].append(value)
 
+    def get_stat(self, key: str, x_key="episode"):
+        """Get statistics.
 
+        Parameters
+        ----------
+        key : str
+            The name of the statistic.
+
+        x_key : str in ['episode', 'step', 'time'], optional
+            x-values.
+
+        Returns
+        -------
+        x : array, shape (n_measurements,)
+            Either episodes or steps at recorded value.
+
+        y : array, shape (n_measurements,)
+            Requested statistics.
+        """
+        assert key in self.stats
+        X_KEYS = ["episode", "step", "time"]
+        assert x_key in X_KEYS
+        x_idx = X_KEYS.index(x_key)
+        x = np.asarray(list(map(lambda x: x[x_idx], self.stats_loc[key])))
+        y = np.asarray(self.stats[key])
+        return x, y
+
+    def define_checkpoint_frequency(self, key: str, checkpoint_interval: int):
+        """Define the checkpoint frequency for a function approximator.
+
+        Parameters
+        ----------
+        key : str
+            The name of the function approximator.
+
+        checkpoint_interval : int
+            Number of steps after which the function approximator should be
+            saved.
+        """
+        """Does nothing."""
+
+    def record_epoch(
+        self,
+        key: str,
+        value: Any,
+        episode: int | None = None,
+        step: int | None = None,
+        t: float | None = None,
+    ):
+        """Does nothing."""
