@@ -25,17 +25,17 @@ def log_progress(
         np.nan if var_y == 0 else 1 - np.var(y_true - y_pred) / var_y
     )
 
-    logger.record_stat(
-        "learning_rate",
-        lr,
-        step=global_step,
-    )
-    logger.record_stat("explained_variance", explained_var, step=global_step)
-    logger.record_stat(
-        "clipfrac",
-        np.mean(clipfracs),
-        step=global_step,
-    )
+    #logger.record_stat(
+    #    "learning_rate",
+    #    lr,
+    #    step=global_step,
+    #)
+    #logger.record_stat("explained_variance", explained_var, step=global_step)
+    #logger.record_stat(
+    #    "clipfrac",
+    #    np.mean(clipfracs),
+    #    step=global_step,
+    #)
     loss.print(logger, global_step)
 
 

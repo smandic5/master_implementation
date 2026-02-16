@@ -42,7 +42,7 @@ def train_maml_ppo(
         if iteration % args.eval_freq == 0:
             checkpoint(agent, args, iteration, run_name=run_name)
 
-        print(f"Meta iteration: {iteration}")
+        #print(f"Meta iteration: {iteration}")
         with higher.innerloop_ctx(
             agent, inner_optimizer, copy_initial_weights=False
         ) as (fast_agent, diff_opt):
@@ -76,9 +76,9 @@ def train_maml_ppo(
                 reward=adapted_reward,
             )
             optimizer.step()
-            logger.record_stat(
-                "Learning_Rate", optimizer.param_groups[0]["lr"], step=iteration
-            )
+            #logger.record_stat(
+            #    "Learning_Rate", optimizer.param_groups[0]["lr"], step=iteration
+            #)
 
 
 def checkpoint(

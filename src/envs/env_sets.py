@@ -12,7 +12,7 @@ def init_envs_set(
         velocities = np.random.uniform(
             args.target_velocity_min, args.target_velocity_max, set_size
         )
-    print(f"Velocities: {[float(round(v, ndigits=2)) for v in velocities]}")
+    #print(f"Velocities: {[float(round(v, ndigits=2)) for v in velocities]}")
     return [
         init_vec_envs(args, run_name, target_velocity)
         for target_velocity in velocities

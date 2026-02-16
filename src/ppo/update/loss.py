@@ -28,9 +28,9 @@ class Loss:
             self.entropy_loss.item(),
             step=global_step,
         )
-        logger.record_stat(
-            "old_approx_kl",
-            self.old_approx_kl.item(),
-            step=global_step,
-        )
-        logger.record_stat("approx_kl", self.approx_kl.item(), step=global_step)
+        #logger.record_stat(
+        #    "old_approx_kl",
+        #    self.old_approx_kl.item(),
+        #    step=global_step,
+        #)
+        #logger.record_stat("approx_kl", self.approx_kl.item(), step=global_step)

@@ -43,7 +43,7 @@ def collect_trajectories(
 
         if infos and "episode" in infos:
             print_reward = infos["episode"]["r"][0]
-            print(f"global_step={global_step}, episodic_return={print_reward}")
+            #print(f"global_step={global_step}, episodic_return={print_reward}")
             if logger is not None:
                 logger.record_stat(
                     "episodic_return",
