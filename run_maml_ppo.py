@@ -12,6 +12,10 @@ from src.train_maml_ppo import train_maml_ppo
 
 
 def main(seed, selector_index):
+
+    print(f"Seed: {seed}")
+    print(f"Selector: {selector_index}")
+        
     args, run_name, device = init_args(seed, selector_index)
     logger = init_logger(args, run_name)
     init_seeds(seed, args.torch_deterministic)
@@ -44,13 +48,13 @@ def main(seed, selector_index):
 
 
 if __name__ == "__main__":
-    seed = 1
-    selector_index = 1
-
+    
     TOTAL_SEEDS = 3
     TOTAL_SELECTORS = 6
 
     if len(sys.argv) >= 2:
+        seed = 1
+        selector_index = 1
         index = int(sys.argv[1])
         if index >= TOTAL_SEEDS * TOTAL_SELECTORS:
             raise Exception(
@@ -63,7 +67,9 @@ if __name__ == "__main__":
         if selector_index >= TOTAL_SELECTORS:
             raise Exception(f"Unexpected Selector: {selector_index}")
 
-    print(f"Seed: {seed}")
-    print(f"Selector: {selector_index}")
-
-    main(seed, selector_index)
+        main(seed, selector_index)
+        
+    else:
+        for seed in range(TOTAL_SEEDS):
+            for selector_index in range(TOTAL_SELECTORS):
+                main(seed, selector_index)

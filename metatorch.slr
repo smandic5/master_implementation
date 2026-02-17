@@ -7,11 +7,9 @@
 #SBATCH --time=2-00:00:00
 #SBATCH -N 1
 #SBATCH --mem=16G
-#SBATCH --cpus-per-task=4
+#SBATCH --cpus-per-task=8
 #SBATCH --gres=gpu:0
 #SBATCH -D /mnt/beegfs/home/smandic/master_implementation/
 
-#SBATCH --array=0-5
-
 singularity exec --home /mnt/beegfs/home/smandic/master_implementation/ /mnt/beegfs/public/images/metatorch.sif \
-    python run_maml_ppo.py $SLURM_ARRAY_TASK_ID
+    python run_maml_ppo.py
