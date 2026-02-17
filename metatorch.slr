@@ -1,0 +1,17 @@
+#!/bin/bash
+#SBATCH --job-name=meta_rl_task_scheduling
+#SBATCH --partition=gpu_ampere
+#SBATCH --account=deepl
+#SBATCH --mail-type=BEGIN,END,FAIL
+#SBATCH --mail-user=svma01@dfki.de
+#SBATCH --time=2-00:00:00
+#SBATCH -N 1
+#SBATCH --mem=16G
+#SBATCH --cpus-per-task=4
+#SBATCH --gres=gpu:0
+#SBATCH -D /mnt/beegfs/home/smandic/master_implementation/
+
+#SBATCH --array=0-5
+
+singularity exec --home /mnt/beegfs/home/smandic/master_implementation/ /mnt/beegfs/public/images/metatorch.sif \
+    python run_maml_ppo.py $SLURM_ARRAY_TASK_ID
