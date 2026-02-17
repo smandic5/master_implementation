@@ -16,6 +16,17 @@ from .task_selector import (
 )
 
 
+def get_selector_name(index: int) -> str:
+    if index == 0:
+        return "UniformSelector"
+    elif index == 1:
+        return "HardTaskSelector"
+    elif index >= 2 and index <= 5:
+        return "InsSelector"
+    else:
+        raise Exception(f"Unrecognized selector index: {index}")
+
+
 def init_selector(
     index: int,
     envs: list[gym.vector.SyncVectorEnv],

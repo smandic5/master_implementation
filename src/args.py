@@ -39,7 +39,7 @@ class Args:
     num_adaptation_steps: int = 1
     train_set_size: int = 15
     test_set_size: int = 3
-    eval_freq: int = 250
+    eval_freq: int = 50
     eval_len: int = 50
     save_checkpoints = True
 

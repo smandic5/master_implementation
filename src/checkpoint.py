@@ -38,6 +38,10 @@ def save_stats(logger, run_name):
         filename = f"{RESULT_DIR}{STAT_DIR}{run_name}.json"
         os.makedirs(os.path.dirname(filename), exist_ok=True)
         dt = logger.stats
+        loc = {}
+        for k, v in logger.stats_loc.items():
+            loc[k] = [value[1] for value in v]
+        dt["loc"] = loc
 
         with open(filename, "w") as f:
             json.dump(dt, f)

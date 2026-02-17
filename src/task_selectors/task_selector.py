@@ -73,7 +73,7 @@ class ProbabilitySelector(LoggingSelector):
             l = len(self.envs_set)
             self.weights = np.ones(l) / l
         for i, e in enumerate(self.weights):
-            self.stats_sample[f"Probability Env {i}"] = e
+            self.stats_sample[f"Env {i} Probability"] = e
         #print(f"Env Probabilities: {[round(float(x), 2) for x in self.weights]}")
         self.sampled_env = np.random.choice(len(self.envs_set), p=self.weights)
         #print(f"Selected: {self.sampled_env}")
