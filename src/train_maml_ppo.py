@@ -27,7 +27,7 @@ def train_maml_ppo(
     inner_optimizer = torch.optim.SGD(
         agent.parameters(), lr=args.inner_learning_rate
     )
-    for iteration in range(args.total_meta_iterations):
+    for iteration in range(1, args.total_meta_iterations + 1):
         if args.anneal_meta_lr:
             lr_annealing(
                 args,
@@ -40,9 +40,6 @@ def train_maml_ppo(
 
         envs = selector.sample()
         optimizer.zero_grad()
-
-        if iteration % args.eval_freq == 0:
-            checkpoint(agent, args, iteration, run_name, logger)
 
         with higher.innerloop_ctx(
             agent, inner_optimizer, copy_initial_weights=False
@@ -80,3 +77,6 @@ def train_maml_ppo(
             #logger.record_stat(
             #    "Learning_Rate", optimizer.param_groups[0]["lr"], step=iteration
             #)
+
+        if iteration % args.eval_freq == 0:
+            checkpoint(agent, args, iteration, run_name, logger)
