@@ -98,7 +98,7 @@ class Args:
     velocities: list[float] = []
 
 
-def init_args(seed: int) -> tuple[Args, str, torch.device]:
+def init_args(seed: int, selector: int) -> tuple[Args, str, torch.device]:
     # args = tyro.cli(Args)
     args = Args()
     args.seed = seed
@@ -106,7 +106,7 @@ def init_args(seed: int) -> tuple[Args, str, torch.device]:
     args.minibatch_size = int(args.batch_size // args.num_minibatches)
     args.num_iterations = args.total_timesteps // args.batch_size
     run_name = (
-        f"{args.env_id}_{args.exp_name}_{args.seed}_{int(time.time())}"
+        f"{args.env_id}_{args.exp_name}_{args.seed}_{selector}_{int(time.time())}"
     )
     device = torch.device(
         "cuda" if torch.cuda.is_available() and args.cuda else "cpu"

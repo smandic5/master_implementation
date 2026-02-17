@@ -12,7 +12,7 @@ from src.train_maml_ppo import train_maml_ppo
 
 
 def main(seed, selector_index):
-    args, run_name, device = init_args(seed)
+    args, run_name, device = init_args(seed, selector_index)
     logger = init_logger(args, run_name)
     init_seeds(seed, args.torch_deterministic)
 
