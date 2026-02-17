@@ -26,7 +26,7 @@ class Args:
     """whether to upload the saved model to huggingface"""
     hf_entity: str = ""
     """the user or org name of the model repository from the Hugging Face Hub"""
-    exp_name: str = "PpoStandalone"
+    exp_name: str = "MamlPpo"
 
     # Meta specific arguments
     total_meta_iterations: int = 10000
@@ -39,7 +39,7 @@ class Args:
     num_adaptation_steps: int = 1
     train_set_size: int = 15
     test_set_size: int = 3
-    eval_freq: int = 5
+    eval_freq: int = 250
     eval_len: int = 50
     save_checkpoints = True
 
@@ -106,7 +106,7 @@ def init_args(seed: int) -> tuple[Args, str, torch.device]:
     args.minibatch_size = int(args.batch_size // args.num_minibatches)
     args.num_iterations = args.total_timesteps // args.batch_size
     run_name = (
-        f"{args.env_id}__{args.exp_name}__{args.seed}__{int(time.time())}"
+        f"{args.env_id}_{args.exp_name}_{args.seed}_{int(time.time())}"
     )
     device = torch.device(
         "cuda" if torch.cuda.is_available() and args.cuda else "cpu"

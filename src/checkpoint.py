@@ -1,14 +1,20 @@
 import os
+import json
 
 import gymnasium as gym
 import torch
 from .agent import Agent
 from .args import Args
+from .logger_base import LoggerBase, MemoryLogger
 
 
-def save_model(args: Args, run_name: str, agent: Agent, iteration: int = None):
-    print("saving")
-    model_path = f"src/runs/{run_name}/{args.exp_name}-{iteration}.agent"
+RESULT_DIR = "experiments/"
+MODEL_DIR = "runs/"
+STAT_DIR = "stats/"
+
+
+def save_model(run_name: str, agent: Agent, iteration: int = None):
+    model_path = f"{RESULT_DIR}{MODEL_DIR}{run_name}/{iteration}.agent"
     os.makedirs(os.path.dirname(model_path), exist_ok=True)
     torch.save(agent.state_dict(), model_path)
     print(f"model saved to {model_path}")
@@ -21,7 +27,37 @@ def load_model(
     envs: gym.vector.SyncVectorEnv,
     device: torch.device,
 ):
-    model_path = f"src/runs/{run_name}/{args.exp_name}.agent"
+    model_path = f"{RESULT_DIR}{MODEL_DIR}{run_name}/{args.exp_name}.agent"
     agent = Agent(envs).to(device)
     agent.load_state_dict(torch.load(model_path, map_location=device))
     return agent
+
+
+def save_stats(logger, run_name):
+    if type(logger) == MemoryLogger:
+        filename = f"{RESULT_DIR}{STAT_DIR}{run_name}.json"
+        os.makedirs(os.path.dirname(filename), exist_ok=True)
+        dt = logger.stats
+
+        with open(filename, "w") as f:
+            json.dump(dt, f)
+            
+        print(f"Statistics saved at {filename}.")
+
+
+def checkpoint(
+    agent: Agent,
+    args: Args,
+    iteration: int,
+    run_name: str,
+    logger: LoggerBase
+):
+    print(f"Checkpoint at iteration: {iteration}")
+    
+    if run_name is None:
+        return
+    
+    if args.save_checkpoints:
+        save_model(run_name, agent, iteration=iteration)
+          
+    save_stats(logger, run_name)

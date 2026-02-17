@@ -3,10 +3,10 @@ import higher
 import numpy as np
 import torch
 import torch.optim as optim
-import csv
+import json
 from .agent import Agent
 from .args import Args
-from .checkpoint import save_model
+from .checkpoint import checkpoint
 from .logger_base import LoggerBase, MemoryLogger
 from .ppo.lr_handling import lr_annealing
 from .ppo.storage import DataHolder, RunData
@@ -22,6 +22,7 @@ def train_maml_ppo(
     logger: LoggerBase = None,
     run_name: str = None,
 ):
+    print(f"Started MAML training.")
     args = data_holder.args
     inner_optimizer = torch.optim.SGD(
         agent.parameters(), lr=args.inner_learning_rate
@@ -40,19 +41,9 @@ def train_maml_ppo(
         envs = selector.sample()
         optimizer.zero_grad()
 
-        if iteration % args.eval_freq == 0 and iteration != 0:
-            checkpoint(agent, args, iteration, run_name=run_name)
-            
-            if type(logger) == MemoryLogger:
-                import json
-                
-                filename = "stats.json"
-                dt = logger.stats
+        if iteration % args.eval_freq == 0:
+            checkpoint(agent, args, iteration, run_name, logger)
 
-                with open(filename, "w") as f:
-                    json.dump(dt, f)
-
-        #print(f"Meta iteration: {iteration}")
         with higher.innerloop_ctx(
             agent, inner_optimizer, copy_initial_weights=False
         ) as (fast_agent, diff_opt):
@@ -89,13 +80,3 @@ def train_maml_ppo(
             #logger.record_stat(
             #    "Learning_Rate", optimizer.param_groups[0]["lr"], step=iteration
             #)
-
-
-def checkpoint(
-    agent: Agent,
-    args: Args,
-    iteration: int,
-    run_name: str = None,
-):
-    if run_name is not None and args.save_checkpoints:
-        save_model(args, run_name, agent, iteration=iteration)
