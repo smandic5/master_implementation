@@ -23,11 +23,11 @@ def save_model(run_name: str, agent: Agent, iteration: int = None):
 
 def load_model(
     run_name: str,
-    args: Args,
+    agent_name: str,
     envs: gym.vector.SyncVectorEnv,
     device: torch.device,
 ):
-    model_path = f"{RESULT_DIR}{MODEL_DIR}{run_name}/{args.exp_name}.agent"
+    model_path = f"{RESULT_DIR}{MODEL_DIR}{run_name}/{agent_name}.agent"
     agent = Agent(envs).to(device)
     agent.load_state_dict(torch.load(model_path, map_location=device))
     return agent
@@ -54,14 +54,15 @@ def checkpoint(
     args: Args,
     iteration: int,
     run_name: str,
-    logger: LoggerBase
+    logger: LoggerBase,
+    save_model: bool = True
 ):
     print(f"Checkpoint at iteration: {iteration}")
     
     if run_name is None:
         return
     
-    if args.save_checkpoints:
+    if save_model and args.save_checkpoints:
         save_model(run_name, agent, iteration=iteration)
           
     save_stats(logger, run_name)

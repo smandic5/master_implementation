@@ -42,6 +42,7 @@ class Args:
     eval_freq: int = 250
     eval_len: int = 50
     save_checkpoints = True
+    velocities_eval: list[float] = [0.3, 1.0, 1.7]
 
     # Selectors
     uniform_start_duration: int = 100
