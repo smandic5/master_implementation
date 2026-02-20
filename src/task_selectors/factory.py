@@ -21,6 +21,14 @@ def get_selector_name(index: int) -> str:
         return "UniformSelector"
     elif index == 1:
         return "HardTaskSelector"
+    elif index == 2:
+        return "InsSelector - Dissimilarity From Last"
+    elif index == 3:
+        return "InsSelector - Generic Dissimilarity"
+    elif index == 4:
+        return "InsSelector - Similarity From Last"
+    elif index == 5:
+        return "InsSelector - Generic Similarity"
     elif index >= 2 and index <= 5:
         return "InsSelector"
     else:
