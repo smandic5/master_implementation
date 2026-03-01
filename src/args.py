@@ -29,7 +29,7 @@ class Args:
     exp_name: str = "MamlPpo"
 
     # Meta specific arguments
-    total_meta_iterations: int = 10000
+    total_meta_iterations: int = 4000
     meta_learning_rate: float = 3e-4
     inner_learning_rate: float = 3e-2
     anneal_meta_lr: bool = True

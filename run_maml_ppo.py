@@ -7,14 +7,17 @@ from src.envs.env_sets import init_train_envs_set
 from src.logger import init_logger
 from src.ppo.storage import DataHolder
 from src.seeds import init_seeds
-from src.task_selectors.factory import init_selector
+from src.task_selectors.factory import init_selector, get_selector_name
 from src.train_maml_ppo import train_maml_ppo
 
 
 def main(seed, selector_index):
+    
+    if selector_index < 6:
+        return
 
     print(f"Seed: {seed}")
-    print(f"Selector: {selector_index}")
+    print(f"Selector: {get_selector_name(selector_index)}")
         
     args, run_name, device = init_args(seed, selector_index)
     logger = init_logger(args, run_name)
@@ -50,7 +53,7 @@ def main(seed, selector_index):
 if __name__ == "__main__":
     
     TOTAL_SEEDS = 3
-    TOTAL_SELECTORS = 6
+    TOTAL_SELECTORS = 10
 
     if len(sys.argv) >= 2:
         seed = 1

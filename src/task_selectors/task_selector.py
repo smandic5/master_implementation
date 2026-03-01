@@ -1,7 +1,9 @@
 import gymnasium as gym
 import higher
 import numpy as np
+import torch
 import scipy.special
+import scipy.optimize
 from ..agent import Agent
 from ..args import Args
 from ..logger_base import LoggerBase
@@ -183,6 +185,43 @@ class InsSelector(MatrixProbabilitySelector):
             if i == self.sampled_env:
                 continue
             diff = compare_agents(agent, module) * (
+                1 if self.disimilarity else -1
+            )
+            self.cost_matrix[self.sampled_env, i] = diff
+            self.cost_matrix[i, self.sampled_env] = diff
+
+        return super().feedback(**kwargs)
+
+
+class ValueSelector(MatrixProbabilitySelector):
+    def __init__(
+        self,
+        envs_set,
+        from_last,
+        agents: list[Agent],
+        disimilarity: bool,
+        **kwargs,
+    ):
+        self.agents = agents
+        self.disimilarity = disimilarity
+        l = len(envs_set)
+        super().__init__(
+            envs_set, from_last, True, cost_matrix=np.zeros((l, l)), **kwargs
+        )
+        
+    def compare_values(self, observations: torch.Tensor, first: Agent, second: Agent):
+        value_first = first.get_value(observations)
+        value_second = second.get_value(observations)
+        mean = torch.mean((value_first - value_second)**2)
+        return mean.item()
+
+    def feedback(self, used_model: higher.patch._MonkeyPatchBase, observations: torch.Tensor, **kwargs):
+        module = copy_from_fast(Agent(self.envs_set[0]), used_model)
+        self.agents[self.sampled_env] = module
+        for i, agent in enumerate(self.agents):
+            if i == self.sampled_env:
+                continue
+            diff = self.compare_values(observations, agent, module) * (
                 1 if self.disimilarity else -1
             )
             self.cost_matrix[self.sampled_env, i] = diff

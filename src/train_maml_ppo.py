@@ -72,6 +72,7 @@ def train_maml_ppo(
                 ),
                 used_model=fast_agent,
                 reward=adapted_reward,
+                observations=data_holder.obs.detach()
             )
             optimizer.step()
             #logger.record_stat(

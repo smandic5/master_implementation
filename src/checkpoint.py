@@ -55,14 +55,14 @@ def checkpoint(
     iteration: int,
     run_name: str,
     logger: LoggerBase,
-    save_model: bool = True
+    should_save_model: bool = True
 ):
     print(f"Checkpoint at iteration: {iteration}")
     
     if run_name is None:
         return
     
-    if save_model and args.save_checkpoints:
+    if should_save_model and args.save_checkpoints:
         save_model(run_name, agent, iteration=iteration)
           
     save_stats(logger, run_name)
