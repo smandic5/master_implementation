@@ -44,7 +44,7 @@ def train_ppo(
             run_data,
             logger,
         )
-        rewards.append(iter_rewards)
+        rewards.append(float(np.average(iter_rewards)))
 
         latest_loss = update_agent(
             agent,
