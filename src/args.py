@@ -29,9 +29,9 @@ class Args:
     exp_name: str = "MamlPpo"
 
     # Meta specific arguments
-    total_meta_iterations: int = 4000
+    total_meta_iterations: int = 7000
     meta_learning_rate: float = 3e-4
-    inner_learning_rate: float = 3e-2
+    inner_learning_rate: float = 1e-1
     anneal_meta_lr: bool = True
     anneal_inner_lr: bool = True
     inner_learning_rate_goal: float = 3e-6
@@ -40,7 +40,7 @@ class Args:
     train_set_size: int = 15
     test_set_size: int = 3
     eval_freq: int = 250
-    eval_len: int = 50
+    eval_len: int = 100
     save_checkpoints = True
     velocities_eval: list[float] = [0.3, 1.0, 1.7]
 

@@ -12,9 +12,6 @@ from src.train_maml_ppo import train_maml_ppo
 
 
 def main(seed, selector_index):
-    
-    if selector_index < 6:
-        return
 
     print(f"Seed: {seed}")
     print(f"Selector: {get_selector_name(selector_index)}")
