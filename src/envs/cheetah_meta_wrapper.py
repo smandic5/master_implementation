@@ -19,6 +19,6 @@ class HalfCheetahMetaWrapper(gym.Wrapper):
         x_velocity = info["x_velocity"]
         forward_reward = -1.0 * abs(x_velocity - self.target_velocity)
         info["velocity_reward"] = forward_reward
-        final_reward = forward_reward - reward_ctrl
+        final_reward = forward_reward + reward_ctrl
 
         return observation, final_reward, terminated, truncated, info
