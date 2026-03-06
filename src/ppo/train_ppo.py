@@ -11,6 +11,8 @@ from .storage import DataHolder, RunData
 from .trajectories import collect_trajectories
 from .update.loss import Loss
 
+import matplotlib.pyplot as plt
+
 
 def train_ppo(
     agent: Agent,
@@ -22,6 +24,7 @@ def train_ppo(
     num_iteration: int = None,
     is_meta_backbone: bool = False,
     uses_inner_lr: bool = False,
+    is_eval=False,
 ) -> tuple[Loss, list]:
     args = data_holder.args
     rewards = []
@@ -30,6 +33,8 @@ def train_ppo(
     if num_iteration is None:
         num_iteration = args.num_iterations
     for iteration in range(1, num_iteration + 1):
+        if iteration % 10 == 0 and is_eval:
+            print(iteration)
         if (args.anneal_ppo_lr and not uses_inner_lr) or (
             args.anneal_inner_lr and uses_inner_lr
         ):
@@ -55,4 +60,9 @@ def train_ppo(
             is_inner_optimizer=is_meta_backbone,
             return_first_loss=is_meta_backbone and iteration == num_iteration,
         )
+        
+        #if iteration % 10 == 0 and is_eval:
+        #    plt.plot(rewards)
+        #    plt.show()
+            
     return latest_loss, rewards
