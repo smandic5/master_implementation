@@ -28,6 +28,8 @@ def train_maml_ppo(
         agent.parameters(), lr=args.inner_learning_rate
     )
     for iteration in range(1, args.total_meta_iterations + 1):
+        if iteration % 10 == 0:
+            print(f"Iteration: {iteration}")
         if args.anneal_meta_lr:
             lr_annealing(
                 args,
@@ -40,6 +42,9 @@ def train_maml_ppo(
 
         envs = selector.sample()
         optimizer.zero_grad()
+        
+        # TODO complete
+        total_loss = 0
 
         with higher.innerloop_ctx(
             agent, inner_optimizer, copy_initial_weights=False
@@ -64,6 +69,9 @@ def train_maml_ppo(
                     "Adapted_Reward", adapted_reward, step=iteration
                 )
             inner_loss.loss.backward()
+        
+            # TODO complete
+            total_loss += inner_loss.loss
 
             selector.feedback(
                 to_log=dict(
