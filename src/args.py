@@ -18,7 +18,7 @@ class Args:
     """if toggled, `torch.backends.cudnn.deterministic=False`"""
     cuda: bool = False
     """if toggled, cuda will be enabled by default"""
-    capture_video: bool = True
+    capture_video: bool = False
     """whether to capture videos of the agent performances (check out `videos` folder)"""
     save_model: bool = True
     """whether to save model into the `runs/{run_name}` folder"""
@@ -29,7 +29,7 @@ class Args:
     exp_name: str = "MamlPpo"
 
     # Meta specific arguments
-    total_meta_iterations: int = 7000
+    total_meta_iterations: int = 500
     meta_learning_rate: float = 3e-4
     inner_learning_rate: float = 3e-2
     anneal_meta_lr: bool = True
@@ -39,13 +39,14 @@ class Args:
     num_adaptation_steps: int = 1
     train_set_size: int = 15
     test_set_size: int = 3
-    eval_freq: int = 250
+    envs_per_iteration: int = 10
+    eval_freq: int = 5
     eval_len: int = 500
     save_checkpoints = True
     velocities_eval: list[float] = [0.3, 1.0, 1.7]
 
     # Selectors
-    uniform_start_duration: int = 100
+    uniform_start_duration: int = 5
     hard_task_scale = 3.0
     ins_scale = 3.0
 
@@ -54,6 +55,8 @@ class Args:
     target_velocity_max: float = 2.0
 
     # Algorithm specific arguments
+    num_steps: int = 100 * 30
+    """the number of steps to run in each environment per policy rollout"""
     env_id: str = "HalfCheetah-v5"
     """the id of the environment"""
     total_timesteps: int = 1000000
@@ -62,8 +65,6 @@ class Args:
     """the learning rate of the optimizer"""
     num_envs: int = 1
     """the number of parallel game environments"""
-    num_steps: int = 256
-    """the number of steps to run in each environment per policy rollout"""
     anneal_ppo_lr: bool = True
     """Toggle learning rate annealing for policy and value networks"""
     gamma: float = 0.99

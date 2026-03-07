@@ -37,6 +37,7 @@ class DataHolder:
         # core data
         self.args = args
         self.device = device
+        self.envs = envs
         self.obs_space = envs.single_observation_space
         self.act_space = envs.single_action_space
 
@@ -80,3 +81,13 @@ class DataHolder:
         b_returns = returns.reshape(-1)
 
         return b_obs, b_actions, b_logprobs, b_values, b_advantages, b_returns
+    
+    def clone(self):
+        return DataHolder(self.envs, self.args, self.device)
+    
+    def __copy__(self):
+        return self.clone()
+    
+    def __deepcopy__(self):
+        return self.clone()
+

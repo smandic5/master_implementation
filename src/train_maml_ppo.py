@@ -28,8 +28,7 @@ def train_maml_ppo(
         agent.parameters(), lr=args.inner_learning_rate
     )
     for iteration in range(1, args.total_meta_iterations + 1):
-        if iteration % 10 == 0:
-            print(f"Iteration: {iteration}")
+        print(f"Iteration: {iteration}")
         if args.anneal_meta_lr:
             lr_annealing(
                 args,
@@ -39,53 +38,56 @@ def train_maml_ppo(
                 False,
                 start_lr=args.meta_learning_rate,
             )
+            
+        losses = []
 
-        envs = selector.sample()
+        for env_i in range(args.envs_per_iteration):
+            #print(f"Batch Env {env_i}")
+            envs = selector.sample()
+
+            with higher.innerloop_ctx(
+                agent, inner_optimizer, copy_initial_weights=False
+            ) as (fast_agent, diff_opt):
+                data_clone = data_holder.clone()
+                inner_loss, rewards = train_ppo(
+                    fast_agent,
+                    envs,
+                    diff_opt,
+                    data_clone,
+                    num_iteration=args.num_adaptation_steps + 1,
+                    is_meta_backbone=True,
+                    uses_inner_lr=True,
+                )
+                if logger is not None:
+                    inner_loss.print(logger, iteration)
+                    adapting_reward = np.mean([np.mean(r) for r in rewards[:-1]])
+                    adapted_reward = np.mean(rewards[-1])
+                    logger.record_stat(
+                        "Adapting_Reward", adapting_reward, step=iteration
+                    )
+                    logger.record_stat(
+                        "Adapted_Reward", adapted_reward, step=iteration
+                    )
+                losses.append(inner_loss.loss)
+
+                selector.feedback(
+                    to_log=dict(
+                        adapting_reward=adapting_reward,
+                        adapted_reward=adapted_reward,
+                    ),
+                    used_model=fast_agent,
+                    reward=adapted_reward,
+                    observations=data_clone.obs.clone().detach()
+                )
+
         optimizer.zero_grad()
-        
-        # TODO complete
-        total_loss = 0
+        meta_loss = torch.stack(losses).mean()
+        meta_loss.backward()
+        optimizer.step()
 
-        with higher.innerloop_ctx(
-            agent, inner_optimizer, copy_initial_weights=False
-        ) as (fast_agent, diff_opt):
-            inner_loss, rewards = train_ppo(
-                fast_agent,
-                envs,
-                diff_opt,
-                data_holder,
-                num_iteration=args.num_adaptation_steps + 1,
-                is_meta_backbone=True,
-                uses_inner_lr=True,
-            )
-            if logger is not None:
-                inner_loss.print(logger, iteration)
-                adapting_reward = np.mean([np.mean(r) for r in rewards[:-1]])
-                adapted_reward = np.mean(rewards[-1])
-                logger.record_stat(
-                    "Adapting_Reward", adapting_reward, step=iteration
-                )
-                logger.record_stat(
-                    "Adapted_Reward", adapted_reward, step=iteration
-                )
-            inner_loss.loss.backward()
-        
-            # TODO complete
-            total_loss += inner_loss.loss
-
-            selector.feedback(
-                to_log=dict(
-                    adapting_reward=adapting_reward,
-                    adapted_reward=adapted_reward,
-                ),
-                used_model=fast_agent,
-                reward=adapted_reward,
-                observations=data_holder.obs.detach()
-            )
-            optimizer.step()
-            #logger.record_stat(
-            #    "Learning_Rate", optimizer.param_groups[0]["lr"], step=iteration
-            #)
+        #logger.record_stat(
+        #    "Learning_Rate", optimizer.param_groups[0]["lr"], step=iteration
+        #)
 
         if iteration % args.eval_freq == 0:
             checkpoint(agent, args, iteration, run_name, logger)
