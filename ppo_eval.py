@@ -55,8 +55,8 @@ def eval_model_env(
     from src.agent import Agent
     agent = Agent(envs).to(device)
     optimizer = optim.Adam(
-                    agent.parameters(), lr=args.inner_learning_rate, eps=1e-5
-                )
+            agent.parameters(), lr=args.inner_learning_rate, eps=1e-5
+        )
     optimizer = optim.SGD(agent.parameters(), lr=args.inner_learning_rate)
     data_holder = DataHolder(envs_test_set[0], args, device)
 
