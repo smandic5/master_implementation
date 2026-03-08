@@ -11,7 +11,7 @@ from .storage import DataHolder, RunData
 from .trajectories import collect_trajectories
 from .update.loss import Loss
 
-import matplotlib.pyplot as plt
+#mport matplotlib.pyplot as plt
 
 
 def train_ppo(
