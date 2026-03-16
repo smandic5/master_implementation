@@ -29,7 +29,7 @@ class Args:
     exp_name: str = "MamlPpo"
 
     # Meta specific arguments
-    total_meta_iterations: int = 500
+    total_meta_iterations: int = 4000
     meta_learning_rate: float = 3e-4
     inner_learning_rate: float = 3e-2
     anneal_meta_lr: bool = True
@@ -37,13 +37,13 @@ class Args:
     inner_learning_rate_goal: float = 3e-6
     inner_learning_rate_anneal_steps: float = 50
     num_adaptation_steps: int = 1
-    train_set_size: int = 15
+    train_set_size: int = 20
     test_set_size: int = 3
-    envs_per_iteration: int = 10
+    envs_per_iteration: int = 15
     eval_freq: int = 5
     eval_len: int = 500
     save_checkpoints = True
-    velocities_eval: list[float] = [0.3, 1.0, 1.7]
+    velocities_eval: list[float] = [1.0, 4.0, 8.0]
 
     # Selectors
     uniform_start_duration: int = 5
@@ -52,10 +52,10 @@ class Args:
 
     # Cheetah specific arguments
     target_velocity_min: float = 0.0
-    target_velocity_max: float = 2.0
+    target_velocity_max: float = 10.0
 
     # Algorithm specific arguments
-    num_steps: int = 100 * 30
+    num_steps: int = 100 * 2
     """the number of steps to run in each environment per policy rollout"""
     env_id: str = "HalfCheetah-v5"
     """the id of the environment"""
@@ -63,7 +63,7 @@ class Args:
     """total timesteps of the experiments"""
     learning_rate: float = 3e-4
     """the learning rate of the optimizer"""
-    num_envs: int = 1
+    num_envs: int = 20
     """the number of parallel game environments"""
     anneal_ppo_lr: bool = True
     """Toggle learning rate annealing for policy and value networks"""
@@ -113,6 +113,7 @@ def init_args(seed: int, selector: int) -> tuple[Args, str, torch.device]:
     device = torch.device(
         "cuda" if torch.cuda.is_available() and args.cuda else "cpu"
     )
+    np.random.seed = seed
     args.velocities = np.random.uniform(
         args.target_velocity_min, args.target_velocity_max, args.train_set_size
     ).tolist()

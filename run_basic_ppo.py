@@ -12,7 +12,7 @@ from src.agent import Agent
 from src.args import Args
 from src.envs.env_sets import init_env_sets
 from src.logger_base import AIMLogger, LoggerBase, LoggerList, StandardLogger
-from src.ppo.ppo_eval import evaluate
+from ppo_eval import evaluate
 from src.ppo.storage import DataHolder, RunData
 from src.ppo.train_ppo import train_ppo
 

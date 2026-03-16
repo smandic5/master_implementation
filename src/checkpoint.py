@@ -33,7 +33,7 @@ def load_model(
     return agent
 
 
-def save_stats(logger, run_name):
+def save_stats(logger, run_name, args: Args,):
     if type(logger) == MemoryLogger:
         filename = f"{RESULT_DIR}{STAT_DIR}{run_name}.json"
         os.makedirs(os.path.dirname(filename), exist_ok=True)
@@ -42,6 +42,7 @@ def save_stats(logger, run_name):
         for k, v in logger.stats_loc.items():
             loc[k] = [value[1] for value in v]
         dt["loc"] = loc
+        dt["lr"] = args.inner_learning_rate
 
         with open(filename, "w") as f:
             json.dump(dt, f)
@@ -65,4 +66,4 @@ def checkpoint(
     if should_save_model and args.save_checkpoints:
         save_model(run_name, agent, iteration=iteration)
           
-    save_stats(logger, run_name)
+    save_stats(logger, run_name, args)

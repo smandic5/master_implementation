@@ -14,7 +14,7 @@ def init_vec_envs(
                 args.env_id,
                 i,
                 args.capture_video,
-                run_name,
+                f"{run_name}_{target_velocity}",
                 args.gamma,
                 target_velocity,
             )

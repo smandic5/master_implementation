@@ -21,13 +21,14 @@ def train_maml_ppo(
     data_holder: DataHolder,
     logger: LoggerBase = None,
     run_name: str = None,
+    start_iteration: int = 1,
 ):
     print(f"Started MAML training.")
     args = data_holder.args
     inner_optimizer = torch.optim.SGD(
         agent.parameters(), lr=args.inner_learning_rate
     )
-    for iteration in range(1, args.total_meta_iterations + 1):
+    for iteration in range(start_iteration, args.total_meta_iterations + 1):
         print(f"Iteration: {iteration}")
         if args.anneal_meta_lr:
             lr_annealing(

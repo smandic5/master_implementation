@@ -85,9 +85,10 @@ if __name__ == "__main__":
         for m in r.model_ids:
             if len(sys.argv) >= 3 and m != int(sys.argv[2]):
                 continue
+            run_id = f"Eval_{r.id}_{r.selector}_{r.seed}_{m}"
             seed = r.seed
             args, _, device = init_args(seed, -1)
-            envs_test_set = init_test_envs_set(args, "Eval")
+            envs_test_set = init_test_envs_set(args, run_id)
                     
             for i, _ in enumerate(envs_test_set):
                 if len(sys.argv) >= 4 and i != int(sys.argv[3]):
