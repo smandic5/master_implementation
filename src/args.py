@@ -113,7 +113,7 @@ def init_args(seed: int, selector: int) -> tuple[Args, str, torch.device]:
     device = torch.device(
         "cuda" if torch.cuda.is_available() and args.cuda else "cpu"
     )
-    np.random.seed = seed
+    np.random.seed(seed)
     args.velocities = np.random.uniform(
         args.target_velocity_min, args.target_velocity_max, args.train_set_size
     ).tolist()
