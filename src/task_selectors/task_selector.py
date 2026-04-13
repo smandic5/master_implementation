@@ -241,5 +241,5 @@ class ContextSelector(MatrixProbabilitySelector):
         velocities = np.array(args.velocities)
         cost_matrix = np.abs(velocities[None,:] - velocities[:,None])
         super().__init__(
-            envs_set, from_last, True, cost_matrix=cost_matrix, **kwargs
+            envs_set, from_last, True, cost_matrix=cost_matrix, args=args, **kwargs
         )
