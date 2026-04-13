@@ -228,3 +228,18 @@ class ValueSelector(MatrixProbabilitySelector):
             self.cost_matrix[i, self.sampled_env] = diff
 
         return super().feedback(**kwargs)
+
+
+class ContextSelector(MatrixProbabilitySelector):
+    def __init__(
+        self,
+        envs_set,
+        from_last,
+        args: Args = None,
+        **kwargs,
+    ):
+        velocities = np.array(args.velocities)
+        cost_matrix = np.abs(velocities[None,:] - velocities[:,None])
+        super().__init__(
+            envs_set, from_last, True, cost_matrix=cost_matrix, **kwargs
+        )

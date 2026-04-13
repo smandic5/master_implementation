@@ -61,7 +61,7 @@ def main(seed: int, selector_index: int, agent_info: tuple[str, int] = None):
 if __name__ == "__main__":
     
     TOTAL_SEEDS = 3
-    TOTAL_SELECTORS = 10
+    TOTAL_SELECTORS = 14
 
     if len(sys.argv) >= 2:
         seed = 1
@@ -77,7 +77,9 @@ if __name__ == "__main__":
             raise Exception(f"Unexpected Seed: {seed}")
         if selector_index >= TOTAL_SELECTORS:
             raise Exception(f"Unexpected Selector: {selector_index}")
-        if len(sys.argv) >= 3:
+        if selector_index < 10:
+            pass # only train context selector
+        elif len(sys.argv) >= 3:
             agent_info = (sys.argv[2], int(sys.argv[3])) 
             main(seed, selector_index, agent_info)
         else:

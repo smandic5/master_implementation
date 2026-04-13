@@ -13,7 +13,8 @@ from .task_selector import (
     InsSelector,
     TaskSelector,
     UniformSelector,
-    ValueSelector
+    ValueSelector,
+    ContextSelector
 )
 
 
@@ -38,6 +39,14 @@ def get_selector_name(index: int) -> str:
         return "ValueSelector - Similarity From Last"
     elif index == 9:
         return "ValueSelector - Generic Similarity"
+    elif index == 10:
+        return "ContextSelector - Dissimilarity From Last"
+    elif index == 11:
+        return "ContextSelector - Generic Dissimilarity"
+    elif index == 12:
+        return "ContextSelector - Similarity From Last"
+    elif index == 13:
+        return "ContextSelector - Generic Similarity"
     else:
         raise Exception(f"Unrecognized selector index: {index}")
 
@@ -85,6 +94,22 @@ def init_selector(
         from_last = True
     elif index == 9:
         cls = ValueSelector
+        disimilarity = False
+        from_last = False
+    elif index == 10:
+        cls = ContextSelector
+        disimilarity = True
+        from_last = True
+    elif index == 11:
+        cls = ContextSelector
+        disimilarity = True
+        from_last = False
+    elif index == 12:
+        cls = ContextSelector
+        disimilarity = False
+        from_last = True
+    elif index == 13:
+        cls = ContextSelector
         disimilarity = False
         from_last = False
     else:
