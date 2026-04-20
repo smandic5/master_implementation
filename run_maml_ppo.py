@@ -17,7 +17,6 @@ def main(seed: int, selector_index: int, agent_info: tuple[str, int] = None):
     print(f"Seed: {seed}")
     print(f"Selector: {get_selector_name(selector_index)}")
     print(f"Agent Info: {agent_info}")
-    return
         
     args, run_name, device = init_args(seed, selector_index)
     logger = init_logger(args, run_name)
