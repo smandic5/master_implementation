@@ -17,6 +17,7 @@ def main(seed: int, selector_index: int, agent_info: tuple[str, int] = None):
     print(f"Seed: {seed}")
     print(f"Selector: {get_selector_name(selector_index)}")
     print(f"Agent Info: {agent_info}")
+    return
         
     args, run_name, device = init_args(seed, selector_index)
     logger = init_logger(args, run_name)
@@ -77,8 +78,8 @@ if __name__ == "__main__":
             raise Exception(f"Unexpected Seed: {seed}")
         if selector_index >= TOTAL_SELECTORS:
             raise Exception(f"Unexpected Selector: {selector_index}")
-        if selector_index < 10:
-            pass # only train context selector
+        if selector_index != 1:
+            pass # only train T3S
         elif len(sys.argv) >= 3:
             agent_info = (sys.argv[2], int(sys.argv[3])) 
             main(seed, selector_index, agent_info)
