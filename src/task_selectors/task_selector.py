@@ -101,7 +101,7 @@ class HardTaskSelector(ProbabilitySelector):
         self.progress_weight = progress_weight
 
     def feedback(self, reward: float = None, **kwargs):
-        progress = (reward + 1500) / 1500
+        progress = max(0, reward / self.args.velocities[self.sampled_env])
         self.learning_speed[self.sampled_env] = (
             progress - self.last_progress[self.sampled_env]
         )
@@ -113,8 +113,8 @@ class HardTaskSelector(ProbabilitySelector):
             else:
                 return x
 
-        p_progress = scipy.special.softmax(standardize(-self.learning_speed))
-        p_speed = scipy.special.softmax(standardize(1 - self.last_progress))
+        p_progress = scipy.special.softmax(standardize(1 - self.last_progress))
+        p_speed = scipy.special.softmax(standardize(-self.learning_speed))
         self.weights = p_progress * self.progress_weight + p_speed * (
             1 - self.progress_weight
         )
