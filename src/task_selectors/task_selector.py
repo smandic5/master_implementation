@@ -145,10 +145,10 @@ class MatrixProbabilitySelector(ProbabilitySelector):
             w = self.cost_matrix[self.sampled_env]
         else:
             w = np.mean(self.cost_matrix, axis=0)
-        if self.sampled_env == np.argmin(w) and any(w != w[self.sampled_env]):
-            not_selected = w != w[self.sampled_env]
-            m = w[not_selected][np.argmin(abs(w[not_selected]))]
-            w[not_selected] -= m
+        if 0 == np.min(w) and any(w != w[self.sampled_env]):
+            non_zero = w != 0
+            m = w[non_zero][np.argmin(abs(w[non_zero]))]
+            w[non_zero] -= m
         if any(w != w[0]):
             w = (w - np.mean(w)) / np.std(w)
         # w *= self.args.ins_scale
@@ -235,11 +235,12 @@ class ContextSelector(MatrixProbabilitySelector):
         self,
         envs_set,
         from_last,
+        disimilarity: bool,
         args: Args = None,
         **kwargs,
     ):
         velocities = np.array(args.velocities)
-        cost_matrix = np.abs(velocities[None,:] - velocities[:,None])
+        cost_matrix = np.abs(velocities[None,:] - velocities[:,None]) * (1 if disimilarity else -1)
         super().__init__(
             envs_set, from_last, True, cost_matrix=cost_matrix, args=args, **kwargs
         )

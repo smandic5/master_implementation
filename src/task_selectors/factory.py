@@ -20,33 +20,33 @@ from .task_selector import (
 
 def get_selector_name(index: int) -> str:
     if index == 0:
-        return "UniformSelector"
+        return "Uniform Selector"
     elif index == 1:
-        return "HardTaskSelector"
+        return "Hard Task Selector"
     elif index == 2:
-        return "InsSelector - Dissimilarity From Last"
+        return "INS Selector - Local Dissimilarity"
     elif index == 3:
-        return "InsSelector - Generic Dissimilarity"
+        return "INS Selector - Generic Dissimilarity"
     elif index == 4:
-        return "InsSelector - Similarity From Last"
+        return "INS Selector - Local Similarity"
     elif index == 5:
-        return "InsSelector - Generic Similarity"
+        return "INS Selector - Generic Similarity"
     elif index == 6:
-        return "ValueSelector - Dissimilarity From Last"
+        return "Value Selector - Local Dissimilarity"
     elif index == 7:
-        return "ValueSelector - Generic Dissimilarity"
+        return "Value Selector - Generic Dissimilarity"
     elif index == 8:
-        return "ValueSelector - Similarity From Last"
+        return "Value Selector - Local Similarity"
     elif index == 9:
-        return "ValueSelector - Generic Similarity"
+        return "Value Selector - Generic Similarity"
     elif index == 10:
-        return "ContextSelector - Dissimilarity From Last"
+        return "Context Selector - Local Dissimilarity"
     elif index == 11:
-        return "ContextSelector - Generic Dissimilarity"
+        return "Context Selector - Generic Dissimilarity"
     elif index == 12:
-        return "ContextSelector - Similarity From Last"
+        return "Context Selector - Local Similarity"
     elif index == 13:
-        return "ContextSelector - Generic Similarity"
+        return "Context Selector - Generic Similarity"
     else:
         raise Exception(f"Unrecognized selector index: {index}")
 

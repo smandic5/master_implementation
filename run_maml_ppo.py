@@ -77,8 +77,8 @@ if __name__ == "__main__":
             raise Exception(f"Unexpected Seed: {seed}")
         if selector_index >= TOTAL_SELECTORS:
             raise Exception(f"Unexpected Selector: {selector_index}")
-        if selector_index != 1:
-            pass # only train T3S
+        if selector_index < 12:
+            pass # only train value similarity selectors
         elif len(sys.argv) >= 3:
             agent_info = (sys.argv[2], int(sys.argv[3])) 
             main(seed, selector_index, agent_info)
