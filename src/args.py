@@ -29,7 +29,7 @@ class Args:
     exp_name: str = "MamlPpo"
 
     # Meta specific arguments
-    total_meta_iterations: int = 4000
+    total_meta_iterations: int = 5000
     meta_learning_rate: float = 3e-4
     inner_learning_rate: float = 3e-2
     anneal_meta_lr: bool = True
@@ -52,7 +52,7 @@ class Args:
 
     # Cheetah specific arguments
     target_velocity_min: float = 0.0
-    target_velocity_max: float = 10.0
+    target_velocity_max: float = 2.0
 
     # Algorithm specific arguments
     num_steps: int = 100 * 2
