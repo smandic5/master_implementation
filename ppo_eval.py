@@ -44,19 +44,23 @@ def eval_model_env(
     device,
     envs_test_set: list[gym.vector.SyncVectorEnv],
     env_i: int,
-):
+):  
     run_name = f"Eval_Selector_{run.selector}_Seed_{run.seed}_Iteration_{model_iteration}_envs_{env_i}"
+    #run_name = "New_Model_on_Env_0"
     print(f"Started {run_name}")
+
     logger = init_logger(args, run_name)
     init_seeds(seed, args.torch_deterministic)
     envs = envs_test_set[env_i]
 
-    #agent = run.get_agent(envs, model_iteration)
-    from src.agent import Agent
-    agent = Agent(envs).to(device)
+    agent = run.get_agent(envs, model_iteration)
+    #print("started brand new agent")
+    #from src.agent import Agent
+    #agent = Agent(envs).to(device)
+    envs = envs_test_set[0]
     optimizer = optim.Adam(
-            agent.parameters(), lr=args.inner_learning_rate, eps=1e-5
-        )
+        agent.parameters(), lr=args.inner_learning_rate, eps=1e-5
+    )
     optimizer = optim.SGD(agent.parameters(), lr=args.inner_learning_rate)
     data_holder = DataHolder(envs_test_set[0], args, device)
 
@@ -81,10 +85,16 @@ if __name__ == "__main__":
     for r in runs:
         if len(sys.argv) >= 2 and r.id != sys.argv[1]:
             continue
-        print(r)
+        if r.selector not in [get_selector_name(i) for i in [12, 13]]:
+            continue
+        if r.seed != 3:
+            continue
         for m in r.model_ids:
             if len(sys.argv) >= 3 and m != int(sys.argv[2]):
                 continue
+            if m % 4000 != 0:
+                continue
+            
             run_id = f"Eval_{r.id}_{r.selector}_{r.seed}_{m}"
             seed = r.seed
             args, _, device = init_args(seed, -1)

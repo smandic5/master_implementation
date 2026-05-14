@@ -19,6 +19,9 @@ def collect_trajectories(
     next_obs, next_done = run_data.next_obs, run_data.next_done
     global_step = run_data.global_step
     rewards = []
+    vels = []
+    ctrl = []
+    rs = []
     for step in range(0, data_holder.args.num_steps):
         global_step += data_holder.args.num_envs
         data_holder.obs[step] = next_obs
@@ -40,6 +43,10 @@ def collect_trajectories(
         next_obs, next_done = torch.Tensor(next_obs).to(device), torch.Tensor(
             next_done
         ).to(device)
+        if "velocity_reward" in infos.keys():
+            vels.append(infos["velocity_reward"])
+            ctrl.append(infos["reward_ctrl"])
+            rs.append(reward)
 
         if infos and "episode" in infos:
             print_reward = infos["episode"]["r"][0]
@@ -53,5 +60,5 @@ def collect_trajectories(
             rewards.append(print_reward)
 
     run_data.update(global_step, next_obs, next_done)
-
+    #print(round(np.average(vels), 2), round(np.average(ctrl), 2), round(np.average(rs), 2))
     return data_holder, run_data, rewards

@@ -9,6 +9,7 @@ def fix_anneal(args: Args, iteration: int) -> float:
     )[0]
     start = args.inner_learning_rate * (1 - progress)
     end = args.inner_learning_rate_goal * progress
+    #print(f"{progress} - {start} - {end} - {start + end}")
     return start + end
 
 
@@ -27,9 +28,10 @@ def lr_annealing(
     uses_inner_lr: bool = False,
     start_lr: float = None,
 ):
-    if start_lr is None:
-        start_lr = (
-            args.inner_learning_rate if uses_inner_lr else args.learning_rate
-        )
-    lrnow = constant_anneal(args, iteration, max_iterations, start_lr)
+    #if start_lr is None:
+    #    start_lr = (
+    #        args.inner_learning_rate if uses_inner_lr else args.learning_rate
+    #    )
+    #lrnow = constant_anneal(args, iteration, max_iterations, start_lr)
+    lrnow = fix_anneal(args, iteration)
     optimizer.param_groups[0]["lr"] = lrnow

@@ -3,6 +3,8 @@
 videos/
 experiments/
 experiments_local/
+experiments_local_old/
+plots/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
